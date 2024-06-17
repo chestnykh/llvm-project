@@ -794,9 +794,17 @@ static void addPGOAndCoverageFlags(const ToolChain &TC, Compilation &C,
       Args.hasArg(options::OPT_coverage))
     FProfileDir = Args.getLastArg(options::OPT_fprofile_dir);
 
-  // TODO: Don't claim -c/-S to warn about -fsyntax-only -c/-S, -E -c/-S,
-  // like we warn about -fsyntax-only -E.
-  (void)(Args.hasArg(options::OPT_c) || Args.hasArg(options::OPT_S));
+  if (Args.hasArg(options::OPT_fsyntax_only)) {
+    Arg *CArg = Args.getLastArg(options::OPT_c);
+    Arg *SArg = Args.getLastArg(options::OPT_S);
+
+    if (CArg)
+      D.Diag(clang::diag::warn_drv_unused_argument)
+          << CArg->getAsString(Args);
+    if (SArg)
+      D.Diag(clang::diag::warn_drv_unused_argument)
+          << SArg->getAsString(Args);
+  }
 
   // Put the .gcno and .gcda files (if needed) next to the primary output file,
   // or fall back to a file in the current directory for `clang -c --coverage
