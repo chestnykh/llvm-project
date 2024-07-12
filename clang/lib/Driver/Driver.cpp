@@ -5039,6 +5039,9 @@ void Driver::BuildJobs(Compilation &C) const {
   (void)C.getArgs().hasArg(options::OPT_driver_mode);
   (void)C.getArgs().hasArg(options::OPT_rsp_quoting);
 
+  (void)C.getArgs().hasArgNoClaim(options::OPT_c);
+  (void)C.getArgs().hasArgNoClaim(options::OPT_S);
+
   bool HasAssembleJob = llvm::any_of(C.getJobs(), [](auto &J) {
     // Match ClangAs and other derived assemblers of Tool. ClangAs uses a
     // longer ShortName "clang integrated assembler" while other assemblers just
